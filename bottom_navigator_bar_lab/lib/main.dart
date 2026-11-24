@@ -1,95 +1,66 @@
 import 'package:flutter/material.dart';
+import 'screen1.dart';
+import 'screen2.dart';
+import 'screen3.dart';
+import 'screen4.dart';
 
-void main() => runApp(const DataTableLab());
+void main() => runApp(const MyApp());
 
-class DataTableLab extends StatelessWidget {
-  const DataTableLab({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CarTablePage(),
+      home: BottomNavLab(),
     );
   }
 }
 
-class Car {
-  Car(this.make, this.model, this.price);
-
-  final String make;
-  final int model;
-  final int price;
-}
-
-class CarTablePage extends StatefulWidget {
-  const CarTablePage({super.key});
+class BottomNavLab extends StatefulWidget {
+  const BottomNavLab({super.key});
 
   @override
-  State<CarTablePage> createState() => _CarTablePageState();
+  State<BottomNavLab> createState() => _BottomNavLabState();
 }
 
-class _CarTablePageState extends State<CarTablePage> {
-  final List<Car> cars = [
-    Car('Honda', 2021, 35000),
-    Car('Toyota', 2011, 6000),
-    Car('BMW', 2010, 9000),
+class _BottomNavLabState extends State<BottomNavLab> {
+  int currentIndex = 0;
+
+  final List<Widget> screens = const [
+    Screen1(),
+    Screen2(),
+    Screen3(),
+    Screen4(),
   ];
-
-  int? sortColumnIndex;
-  bool sortAscending = true;
-
-  void sortBy(
-    int columnIndex,
-    bool ascending,
-    int Function(Car a, Car b) compare,
-  ) {
-    setState(() {
-      cars.sort((a, b) => ascending ? compare(a, b) : compare(b, a));
-      sortColumnIndex = columnIndex;
-      sortAscending = ascending;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DataTable Sorting'),
+        title: const Text('Bottom Navigation Bar'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
-      body: DataTable(
-        sortColumnIndex: sortColumnIndex,
-        sortAscending: sortAscending,
-        border: TableBorder.all(color: Colors.black),
-        headingRowColor: WidgetStateProperty.all<Color>(Colors.grey),
-        columns: [
-          DataColumn(
-            label: const Text('Car Make'),
-            onSort: (i, asc) =>
-                sortBy(i, asc, (a, b) => a.make.compareTo(b.make)),
-          ),
-          DataColumn(
-            label: const Text('Model'),
-            onSort: (i, asc) =>
-                sortBy(i, asc, (a, b) => a.model.compareTo(b.model)),
-          ),
-          DataColumn(
-            label: const Text('Price'),
-            onSort: (i, asc) =>
-                sortBy(i, asc, (a, b) => a.price.compareTo(b.price)),
-          ),
-        ],
-        rows: [
-          for (final Car car in cars)
-            DataRow(
-              cells: [
-                DataCell(Text(car.make)),
-                DataCell(Text(car.model.toString())),
-                DataCell(Text(car.price.toString())),
-              ],
-            ),
+      body: screens[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.blue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        iconSize: 30,
+        currentIndex: currentIndex,
+        onTap: (int index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Alarm'),
+          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Business'),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
         ],
       ),
     );
